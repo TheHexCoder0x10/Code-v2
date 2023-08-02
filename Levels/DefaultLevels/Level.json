@@ -1,0 +1,9 @@
+{
+    "Difficulty": "Normal",
+    "LevelOrder": [
+        "Level1.txt"
+    ],
+    "CurrentLevel": "Level1.txt",
+    "Health": 100,
+    "AmmoSize": 16
+}
