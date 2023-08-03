@@ -30,7 +30,7 @@ Track2 = pygame.mixer.Sound('Assets/Fonts And Sounds/Track2.mp3')
 Track3 = pygame.mixer.Sound('Assets/Fonts And Sounds/Track3.mp3')
 pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(220, 200, 140, 5))
 pygame.display.flip()
-Settings_Data = JsonHandler.getdata('Assets/Settings.json')
+Settings_Data = JsonHandler.getdata('/Assets/Settings.json')
 BlackoutBorder = pygame.image.load('Assets/Images/Blackout-Border.png')
 font = pygame.font.Font('Assets/Fonts And Sounds/sofachrome.ttf', 64)
 background = pygame.image.load('Assets/Images/RedBackground.jpg')
@@ -71,7 +71,7 @@ def init():
     pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(220, 200, 20, 5))
     pygame.display.flip()
     mixer.init()
-    Settings_Data = JsonHandler.getdata('Assets/Settings.json')
+    Settings_Data = JsonHandler.getdata('/Assets/Settings.json')
     BlackoutBorder = pygame.image.load('Assets/Images/Blackout-Border.png')
     background = pygame.image.load('Assets/Images/RedBackground.jpg')
     background = pygame.transform.scale(background, (640, 360))
@@ -298,7 +298,7 @@ def draw_menu():
                 if pygame.mouse.get_pos()[0] in range(600, 640):
                     if pygame.mouse.get_pos()[1] in range(320, 360):
                         answer = messagebox.askquestion('Pixel Blitz - Level Editor', 'Do you want to make a new level?')
-                        if answer == 'yes': Level = New_Level(); return True
+                        if answer == 'yes': Level = LevelEditor.New_Level(screen); return True
     return False
 
 
@@ -333,7 +333,7 @@ def level_select():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 Log.close()
-                JsonHandler.savedata(Settings_Data, 'Assets/Settings.json')
+                JsonHandler.savedata(Settings_Data, '/Assets/Settings.json')
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if MousePos[0] in range(540, 640):
@@ -356,7 +356,7 @@ def level_select():
             pygame.quit()
             if LevelEditor.run(Level):
                 Log.close()
-                JsonHandler.savedata(Settings_Data, 'Assets/Settings.json')
+                JsonHandler.savedata(Settings_Data, '/Assets/Settings.json')
                 sys.exit()
             else:
                 init()
@@ -391,7 +391,7 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 Log.close()
-                JsonHandler.savedata(Settings_Data, 'Assets/Settings.json')
+                JsonHandler.savedata(Settings_Data, '/Assets/Settings.json')
                 sys.exit()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a: Left = False
@@ -443,7 +443,7 @@ def main():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     Log.close()
-                    JsonHandler.savedata(Settings_Data, 'Assets/Settings.json')
+                    JsonHandler.savedata(Settings_Data, '/Assets/Settings.json')
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -471,8 +471,8 @@ def settings_menu():
     global Settings, click, screen
     settings_font = pygame.font.Font('Assets/Fonts And Sounds/sofachrome.ttf', 16)
     hold = [False, False]
-    r = 0
-    r_r = True
+    red = 0
+    red_bool = True
     while Settings:
         pygame.mixer.music.set_volume(int(Settings_Data['Volume']))
         mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -480,7 +480,7 @@ def settings_menu():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 Log.close()
-                JsonHandler.savedata(Settings_Data, 'Assets/Settings.json')
+                JsonHandler.savedata(Settings_Data, '/Assets/Settings.json')
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE: Settings = False
@@ -489,12 +489,12 @@ def settings_menu():
             if event.type == pygame.MOUSEBUTTONUP:
                 click = hold[0] = False
 
-        if r_r:
-            if r == 255: r_r = False; r -= 1
-            else: r += 1
+        if red_bool:
+            if red == 255: red_bool = False; red -= 1
+            else: red += 1
         else:
-            if r == 0: r_r = True; r += 1
-            else: r -= 1
+            if red == 0: red_bool = True; red += 1
+            else: red -= 1
 
         if mouse_x in range(420, 620) and mouse_y in range(20, 30) or hold[0]:
             if click or hold[0]:
@@ -519,13 +519,13 @@ def settings_menu():
                 pygame.quit()
                 if LevelEditor.run():
                     Log.close()
-                    JsonHandler.savedata(Settings_Data, 'Assets/Settings.json')
+                    JsonHandler.savedata(Settings_Data, '/Assets/Settings.json')
                     sys.exit()
                 else:
                     init()
                     return
 
-        screen.fill((int(r * 0.1), 0, 0))
+        screen.fill((int(red * 0.1), 0, 0))
         draw_line(screen, (64, 64, 64), (420, 20), (620, 20), 5)
         draw_line(screen, (255, 255, 255), (420, 20), (420 + int(Settings_Data['Volume']) * 2, 20), 5)
         draw_line(screen, (64, 64, 64), (600, 42.5), (620, 42.5), 11)
@@ -563,45 +563,6 @@ def draw_line(surface, color, start, end, width):
     pygame.draw.line(surface, color, start, end, width)
     pygame.draw.circle(surface, color, start, width / 2)
     pygame.draw.circle(surface, color, end, width / 2)
-
-
-def New_Level():
-    # noinspection PyGlobalUndefined
-    global clock, screen
-    screen = pygame.display.set_mode((300, 16))
-    font = pygame.font.Font('Assets/Fonts And Sounds/NineTsukiRegular.ttf', 16)
-    Name = ''
-    input_rect = pygame.Rect(30, 0, 200, 16)
-    color_active = pygame.Color((128, 0, 0))
-    color_passive = pygame.Color((64, 0, 0))
-    text = font.render('Name', True, (255, 255, 255))
-    active = False
-    end = False
-    while not end:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: pygame.quit(); sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if input_rect.collidepoint(event.pos): active = True
-                else: active = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE: Name = Name[:-1]
-                elif event.key == pygame.K_RETURN: end = True
-                else: Name += event.unicode
-        screen.fill((0, 0, 0))
-        if active: color = color_active
-        else: color = color_passive
-        pygame.draw.rect(screen, color, input_rect)
-        text_surface = font.render(Name, True, (255, 255, 255))
-        screen.blit(text, (0, 0))
-        screen.blit(text_surface, (input_rect.x, input_rect.y))
-        input_rect.w = max(270, text_surface.get_width() + 10)
-        pygame.display.flip()
-        clock.tick(60)
-    screen = pygame.display.set_mode((640, 360))
-    os.mkdir(str(os.getcwd()) + '\\Levels\\' + Name)
-    time.sleep(2)
-    JsonHandler.copydata(str(os.getcwd()) + '\\Levels\\DefaultLevels\\Files\\Level.json', str(os.getcwd()) + '\\Levels\\' + Name + '\\Files\\Level.json')
-    return Name
 
 
 def save(Data):

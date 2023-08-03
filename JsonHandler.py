@@ -12,7 +12,7 @@ def getdata(FilePath):
 
 
 def savedata(data, FilePath):
-    jsonfile = open(FilePath, 'w')
+    jsonfile = open(os.getcwd()+FilePath, 'w')
     json.dump(data, jsonfile, indent=4)
     jsonfile.close()
 

@@ -1,6 +1,7 @@
 import math
 import os
 import sys
+import time
 from tkinter import messagebox
 import pygame
 from pygame import mixer
@@ -30,11 +31,11 @@ def run(Level=''):
     Icon = pygame.image.load('Assets/Images/Pistol.png')
     pygame.display.set_icon(Icon)
     if Level == '':
-        if level_select(): return True
+        if not level_select(): return True
     else:
         WorldEvents.init()
         World_Data = WorldEvents.load_level(str(Level))
-        Settings_Data = JsonHandler.getdata('Levels/' + str(Level) + '/Files/Level.json')
+        Settings_Data = JsonHandler.getdata('/Levels/' + str(Level) + '/Files/Level.json')
         Folder = 'Levels/' + str(Level)
         Running = False
     UP = DOWN = LEFT = RIGHT = Pause = False
@@ -207,7 +208,7 @@ def draw_menu():
                 if pygame.mouse.get_pos()[0] in range(600, 640):
                     if pygame.mouse.get_pos()[1] in range(320, 360):
                         answer = messagebox.askquestion('Pixel Blitz - Level Editor', 'Do you want to make a new level?')
-                        if answer == 'yes': Level = New_Level(); return True
+                        if answer == 'yes': Level = New_Level(screen); return True
     return False
 
 
@@ -255,6 +256,7 @@ def level_select():
         screen.blit(Title, (0, 0))
         screen.blit(DoneText, (540, 0))
         pygame.display.flip()
+    return Level
 
 
 def draw():
@@ -310,9 +312,9 @@ def save(Data):
     File.close()
 
 
-def New_Level():
+def New_Level(screen):
     # noinspection PyGlobalUndefined
-    global clock, screen
+    clock = pygame.time.Clock()
     sfont = pygame.font.Font('Assets/Fonts And Sounds/NineTsukiRegular.ttf', 24)
     mfont = pygame.font.Font('Assets/Fonts And Sounds/NineTsukiRegular.ttf', 32)
     Name = ''
