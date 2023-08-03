@@ -33,7 +33,7 @@ def next_level(direction=1):
     else:
         if Level_Data['LevelOrder'].index(Level_Data['CurrentLevel']) + direction == len(Level_Data['LevelOrder']):
             Level_Data['CurrentLevel'] = Level_Data['LevelOrder'][0]
-            JsonHandler.savedata(Level_Data, 'Levels/' + folder + '/Level.json')
+            JsonHandler.savedata(Level_Data, 'Levels/' + folder + '/Files/Level.json')
             return 'Go To Home Screen'
         else:
             Data = Level_Data['LevelOrder'].index(Level_Data['CurrentLevel']) + direction
@@ -63,7 +63,7 @@ def load_level(Folder):
     # noinspection PyGlobalUndefined
     global Level, folder, Level_Data
     folder = Folder
-    Level_Data = JsonHandler.getdata('Levels/' + Folder + '/Level.json')
+    Level_Data = JsonHandler.getdata('Levels/' + Folder + '/Files/Level.json')
     try:
         Level_File = open('Levels/' + Folder + '/' + Level_Data['CurrentLevel'], 'x')
         Level_File.close()

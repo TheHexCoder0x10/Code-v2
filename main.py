@@ -600,7 +600,7 @@ def New_Level():
     screen = pygame.display.set_mode((640, 360))
     os.mkdir(str(os.getcwd()) + '\\Levels\\' + Name)
     time.sleep(2)
-    JsonHandler.copydata(str(os.getcwd()) + '\\Levels\\DefaultLevels\\Level.json', str(os.getcwd()) + '\\Levels\\' + Name + '\\Level.json')
+    JsonHandler.copydata(str(os.getcwd()) + '\\Levels\\DefaultLevels\\Files\\Level.json', str(os.getcwd()) + '\\Levels\\' + Name + '\\Files\\Level.json')
     return Name
 
 

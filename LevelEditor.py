@@ -34,7 +34,7 @@ def run(Level=''):
     else:
         WorldEvents.init()
         World_Data = WorldEvents.load_level(str(Level))
-        Settings_Data = JsonHandler.getdata('Levels/' + str(Level) + '/Level.json')
+        Settings_Data = JsonHandler.getdata('Levels/' + str(Level) + '/Files/Level.json')
         Folder = 'Levels/' + str(Level)
         Running = False
     UP = DOWN = LEFT = RIGHT = Pause = False
@@ -245,7 +245,7 @@ def level_select():
 
         if Level and Done:
             World_Data = WorldEvents.load_level(str(Level))
-            Settings_Data = JsonHandler.getdata('Levels/' + str(Level) + '/Level.json')
+            Settings_Data = JsonHandler.getdata('Levels/' + str(Level) + '/Files/Level.json')
             Folder = 'Levels/' + str(Level)
             Running = False
         elif Done:
@@ -313,15 +313,16 @@ def save(Data):
 def New_Level():
     # noinspection PyGlobalUndefined
     global clock, screen
-    screen = pygame.display.set_mode((300, 16))
-    font = pygame.font.Font('Assets/Fonts And Sounds/NineTsukiRegular.ttf', 16)
+    font = pygame.font.Font('Assets/Fonts And Sounds/NineTsukiRegular.ttf', 32)
     Name = ''
-    input_rect = pygame.Rect(30, 0, 200, 16)
+    input_rect = pygame.Rect(55, 0, 265, 32)
     color_active = pygame.Color((128, 0, 0))
     color_passive = pygame.Color((64, 0, 0))
     text = font.render('Name', True, (255, 255, 255))
     active = False
     end = False
+    MinusRect = pygame.Rect(55, 45, 24, 24)
+    PlusRect = pygame.Rect(79, 45, 24, 24)
     while not end:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: pygame.quit(); sys.exit()
@@ -336,16 +337,17 @@ def New_Level():
         if active: color = color_active
         else: color = color_passive
         pygame.draw.rect(screen, color, input_rect)
+        pygame.draw.rect(screen, (255, 255, 255), MinusRect)
+        pygame.draw.rect(screen, (128, 128, 255), PlusRect)
         text_surface = font.render(Name, True, (255, 255, 255))
         screen.blit(text, (0, 0))
         screen.blit(text_surface, (input_rect.x, input_rect.y))
         input_rect.w = max(270, text_surface.get_width() + 10)
         pygame.display.flip()
         clock.tick(60)
-    screen = pygame.display.set_mode((640, 360))
     os.mkdir(str(os.getcwd()) + '\\Levels\\' + Name)
-    JsonHandler.copydata(str(os.getcwd()) + '\\Levels\\DefaultLevels\\Level.json', str(os.getcwd()) + '\\Levels\\' + Name + '\\Level.json')
+    JsonHandler.copydata(str(os.getcwd()) + '\\Levels\\DefaultLevels\\Files\\Level.json', str(os.getcwd()) + '\\Levels\\' + Name + '\\Files\\Level.json')
     return Name
 
 
-if __name__ == "__main__": run()
+if __name__ == "__main__": Log.init(); run()
