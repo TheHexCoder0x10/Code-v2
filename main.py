@@ -251,6 +251,7 @@ def home_screen():
         pygame.draw.rect(screen, (0, 0, 0), (131, 141, 378, 77), 0)
         pygame.draw.rect(screen, (255, 0, 0), (131, 141, 378, 77), 5)
         text = font.render('Start', True, (255, 0, 0))
+        text = pygame.transform.scale(text, (358, 77))
         screen.blit(text, (141, 138))
         screen.blit(icon, (600, 320))
         pygame.display.flip()
