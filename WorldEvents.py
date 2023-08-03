@@ -63,7 +63,7 @@ def load_level(Folder):
     # noinspection PyGlobalUndefined
     global Level, folder, Level_Data
     folder = Folder
-    Level_Data = JsonHandler.getdata('Levels/' + Folder + '/Files/Level.json')
+    Level_Data = JsonHandler.getdata('\\Levels\\' + Folder + '\\Files\\Level.json')
     try:
         Level_File = open('Levels/' + Folder + '/' + Level_Data['CurrentLevel'], 'x')
         Level_File.close()

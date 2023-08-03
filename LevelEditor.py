@@ -245,7 +245,7 @@ def level_select():
 
         if Level and Done:
             World_Data = WorldEvents.load_level(str(Level))
-            Settings_Data = JsonHandler.getdata('Levels/' + str(Level) + '/Files/Level.json')
+            Settings_Data = JsonHandler.getdata('/Levels/' + str(Level) + '/Files/Level.json')
             Folder = 'Levels/' + str(Level)
             Running = False
         elif Done:
@@ -313,22 +313,26 @@ def save(Data):
 def New_Level():
     # noinspection PyGlobalUndefined
     global clock, screen
-    font = pygame.font.Font('Assets/Fonts And Sounds/NineTsukiRegular.ttf', 32)
+    sfont = pygame.font.Font('Assets/Fonts And Sounds/NineTsukiRegular.ttf', 24)
+    mfont = pygame.font.Font('Assets/Fonts And Sounds/NineTsukiRegular.ttf', 32)
     Name = ''
     input_rect = pygame.Rect(55, 0, 265, 32)
     color_active = pygame.Color((128, 0, 0))
     color_passive = pygame.Color((64, 0, 0))
-    text = font.render('Name', True, (255, 255, 255))
+    text = mfont.render('Name', True, (255, 255, 255))
     active = False
     end = False
-    MinusRect = pygame.Rect(55, 45, 24, 24)
-    PlusRect = pygame.Rect(79, 45, 24, 24)
+    levels = 1
+    MinusRect = pygame.Rect(0, 45, 12, 16)
+    PlusRect = pygame.Rect(16, 45, 12, 16)
     while not end:
         for event in pygame.event.get():
             if event.type == pygame.QUIT: pygame.quit(); sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if input_rect.collidepoint(event.pos): active = True
                 else: active = False
+                if MinusRect.collidepoint(event.pos): levels = max(1, levels-1)
+                if PlusRect.collidepoint(event.pos): levels += 1
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE: Name = Name[:-1]
                 elif event.key == pygame.K_RETURN: end = True
@@ -337,16 +341,28 @@ def New_Level():
         if active: color = color_active
         else: color = color_passive
         pygame.draw.rect(screen, color, input_rect)
-        pygame.draw.rect(screen, (255, 255, 255), MinusRect)
-        pygame.draw.rect(screen, (128, 128, 255), PlusRect)
-        text_surface = font.render(Name, True, (255, 255, 255))
+        pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(1, 51, 14, 4))
+        pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(17, 51, 14, 4))
+        pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(22, 46, 4, 14))
+        text_surface = mfont.render(Name, True, (255, 255, 255))
+        LevelsText = sfont.render('Levels:' + str(levels), True, (128, 128, 128))
         screen.blit(text, (0, 0))
         screen.blit(text_surface, (input_rect.x, input_rect.y))
+        screen.blit(LevelsText, (35, 41))
         input_rect.w = max(270, text_surface.get_width() + 10)
         pygame.display.flip()
         clock.tick(60)
     os.mkdir(str(os.getcwd()) + '\\Levels\\' + Name)
-    JsonHandler.copydata(str(os.getcwd()) + '\\Levels\\DefaultLevels\\Files\\Level.json', str(os.getcwd()) + '\\Levels\\' + Name + '\\Files\\Level.json')
+    os.mkdir(str(os.getcwd()) + '\\Levels\\' + Name + '\\Files')
+    Settings_Data = JsonHandler.getdata('/Levels/DefaultLevels/Files/Level.json')
+    LevelOrder = []
+    for i in range(levels):
+        LevelOrder.append('Level'+str(1+i)+'.txt')
+        open(os.getcwd() + '\\Levels\\' + Name + '\\' + LevelOrder[i], 'w').close()
+    open(os.getcwd() + '\\Levels\\' + Name + '\\Files\\Level.json', 'w').close()
+    Settings_Data['LevelOrder'] = LevelOrder
+    JsonHandler.savedata(Settings_Data, os.getcwd() + '\\Levels\\' + Name + '\\Files\\Level.json')
+
     return Name
 
 
