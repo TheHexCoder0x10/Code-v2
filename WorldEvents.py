@@ -176,3 +176,7 @@ def update(screen, Left, Right, Up, Bullet_x, Bullet_y, Bullet_angle, fire, angl
     xv = xv * 0.99; yv = yv * 0.99
     x += xv * 0.1; y += yv * 0.1
     if -0.5 < xv < 0.5: xv = 0
+
+
+def TileDecide(Tiles):
+    pass

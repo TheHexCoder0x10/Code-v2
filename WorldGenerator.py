@@ -42,7 +42,9 @@ def draw():
                     except IndexError:
                         if j == 19 and b == 2: c[a*3+b] = 1
             if 0 not in c: screen.blit(Textures[Texture_Names.index('Flag.png')], (i*32, j*32))
-            elif List[i][j]: pygame.draw.rect(screen, (64, 64, 64), pygame.Rect(i*32, j*32, 32, 32), 0)
+            elif List[i][j]:
+                WorldEvents.TileDecide()
+                pygame.draw.rect(screen, (64, 64, 64), pygame.Rect(i*32, j*32, 32, 32), 0)
     pygame.display.flip()
 
 
