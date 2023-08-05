@@ -305,7 +305,7 @@ def draw_menu():
 
 def level_select():
     # noinspection PyGlobalUndefined
-    global Difficulty, DifficultyText, Level, click, Levels_List
+    global Difficulty, DifficultyText, Level, click, Levels_List, Level_Folder
     # noinspection PyPep8Naming
     Level = False
     Done = False
@@ -345,6 +345,7 @@ def level_select():
                 if event.key == pygame.K_RETURN: Done = True
 
         if Level and Done:
+            Level_Folder = Level
             World.load_level(str(Level))
             Settings_Data['LatestLevel'] = str(Level)
             Running = False
@@ -375,7 +376,8 @@ def level_select():
 
 
 def main():
-    global screen
+    # noinspection PyGlobalUndefined
+    global screen, Level_Folder
     for loading in range(50, 180):
         time.sleep(random.randint(1, 10) * 0.00005)
         pygame.draw.rect(screen, (64, 64, 64), pygame.Rect(230, 200, 180, 5))
@@ -403,7 +405,9 @@ def main():
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d: Right = True
                 elif event.key == pygame.K_UP or event.key == pygame.K_SPACE or event.key == pygame.K_w: Up = True
                 elif event.key == pygame.K_ESCAPE: Pause = True
-                elif event.key == pygame.K_r: Ammo = Settings_Data['Ammo']
+                elif event.key == pygame.K_r:
+                    JsonHandler.getdata('/Levels/'+Level_Folder+'/Files/Level.json')
+                    Ammo = int(Settings_Data['Ammo'])
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click = True
                 if event.button == 1 and Ammo:
@@ -415,6 +419,7 @@ def main():
         if not music.get_busy():
             new_track()
         screen.fill((0, 0, 0))
+        print(Settings_Data)
         output = World.update(screen, Left, Right, Up, Bullets_x, Bullets_y, Bullets_angle, fire, angle, Ammo)
         if output:
             screen.blit(pygame.image.load('Assets/Images/Pistol.png'), (304, 164))
