@@ -25,9 +25,11 @@ Running = True
 Track = 3
 pygame.mixer.set_num_channels(8)
 music = pygame.mixer.Channel(5)
+sfx = pygame.mixer.Channel(4)
 Track1 = pygame.mixer.Sound('Assets/Fonts And Sounds/Track1.mp3')
 Track2 = pygame.mixer.Sound('Assets/Fonts And Sounds/Track2.mp3')
 Track3 = pygame.mixer.Sound('Assets/Fonts And Sounds/Track3.mp3')
+ShootSound = pygame.mixer.Sound('Assets/Fonts And Sounds/Shoot.mp3')
 pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(220, 200, 140, 5))
 pygame.display.flip()
 Settings_Data = JsonHandler.getdata('/Assets/Settings.json')
@@ -61,7 +63,7 @@ import LevelEditor
 
 
 def init():
-    global screen, Settings, bullet, Settings_Data, BlackoutBorder, font16, background, Ammo,  clock, music, Track1, Track2, Track3, Icon
+    global screen, Settings, bullet, Settings_Data, BlackoutBorder, font16, background, Ammo,  clock, music, ShootSound, Track1, Track2, Track3, Icon
     pygame.init()
     pygame.display.set_caption('Pixel Blitz')
     Icon = pygame.image.load('Assets/Images/Pistol.png')
@@ -81,6 +83,7 @@ def init():
     Track1 = pygame.mixer.Sound('Assets/Fonts And Sounds/Track1.mp3')
     Track2 = pygame.mixer.Sound('Assets/Fonts And Sounds/Track2.mp3')
     Track3 = pygame.mixer.Sound('Assets/Fonts And Sounds/Track3.mp3')
+    ShootSound = pygame.mixer.Sound('Assets/Fonts And Sounds/Shoot.mp3')
     Settings = False
     Ammo = 0
     font16 = pygame.font.Font('Assets/Fonts And Sounds/sofachrome.ttf', 8)
@@ -197,8 +200,9 @@ class Player:
 
 
     def fire(self):
-        global Bullets_x, Bullets_y, Bullets_angle, angle, Ammo
+        global Bullets_x, Bullets_y, Bullets_angle, angle, Ammo, sfx, ShootSound
         if Ammo:
+            sfx.play(ShootSound)
             Bullets_data = self.step(320, 180, 10, angle)
             Bullets_x.append(Bullets_data[0])
             Bullets_y.append(Bullets_data[1])
@@ -219,7 +223,7 @@ class Player:
 
 
 def home_screen():
-    pygame.mixer.music.set_volume((int(Settings_Data['Volume'])))
+    music.set_volume(int(Settings_Data['Volume'])/100)
     # noinspection PyGlobalUndefined
     global mouse_x, mouse_y, clock, click, background, font, Running, Settings, Icon
     icon = pygame.image.load('Assets/Images/settings.png')
@@ -406,8 +410,7 @@ def main():
                 elif event.key == pygame.K_UP or event.key == pygame.K_SPACE or event.key == pygame.K_w: Up = True
                 elif event.key == pygame.K_ESCAPE: Pause = True
                 elif event.key == pygame.K_r:
-                    JsonHandler.getdata('/Levels/'+Level_Folder+'/Files/Level.json')
-                    Ammo = int(Settings_Data['Ammo'])
+                    Ammo = (JsonHandler.getdata('/Levels/'+Level_Folder+'/Files/Level.json'))['AmmoSize']
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click = True
                 if event.button == 1 and Ammo:
@@ -419,7 +422,6 @@ def main():
         if not music.get_busy():
             new_track()
         screen.fill((0, 0, 0))
-        print(Settings_Data)
         output = World.update(screen, Left, Right, Up, Bullets_x, Bullets_y, Bullets_angle, fire, angle, Ammo)
         if output:
             screen.blit(pygame.image.load('Assets/Images/Pistol.png'), (304, 164))
@@ -435,6 +437,7 @@ def main():
                 screen.blit(Icon, (304, 164))
                 pygame.display.flip()
             screen.fill((0, 0, 0))
+        music.set_volume(int(Settings_Data['Volume'])/100)
         screen.blit(BlackoutBorder, (0, 0))
         Player().update()
         draw_GUI()
@@ -443,7 +446,7 @@ def main():
 
 
         while Pause:
-            pygame.mixer.music.set_volume(int(Settings_Data['Volume']))
+            music.set_volume(int(Settings_Data['Volume'])/100)
             mouse_x, mouse_y = pygame.mouse.get_pos()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -480,7 +483,8 @@ def settings_menu():
     red = 0
     red_bool = True
     while Settings:
-        pygame.mixer.music.set_volume(int(Settings_Data['Volume']))
+        music.set_volume(int(Settings_Data['Volume'])/100)
+
         mouse_x, mouse_y = pygame.mouse.get_pos()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
