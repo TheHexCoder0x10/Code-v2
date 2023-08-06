@@ -1,5 +1,6 @@
 {
     "OpenLatestLevel": false,
     "LatestLevel": "DefaultLevels",
-    "Volume": 100
+    "Volume": 100,
+    "online": false
 }
