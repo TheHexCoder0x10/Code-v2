@@ -442,7 +442,7 @@ def main():
         Player().update()
         draw_GUI()
         pygame.display.flip()
-        clock.tick(60)
+        print(clock.get_fps())
 
 
         while Pause:

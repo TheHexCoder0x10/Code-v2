@@ -1,7 +1,10 @@
 {
     "Difficulty": "Normal",
     "LevelOrder": [
-        "Level1.txt"
+        "Level1.txt",
+        "Level2.txt",
+        "Level3.txt",
+        "Level4.txt"
     ],
     "CurrentLevel": "Level1.txt",
     "Health": 100,
